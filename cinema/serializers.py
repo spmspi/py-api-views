@@ -1,6 +1,7 @@
 from rest_framework import serializers
+from rest_framework.views import APIView
 
-from cinema.models import Movie
+from cinema.models import Movie, Genre, Actor, CinemaHall
 
 
 class MovieSerializer(serializers.Serializer):
@@ -14,11 +15,58 @@ class MovieSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get("title", instance.title)
-        instance.description = validated_data.get(
-            "description", instance.description
-        )
+        instance.description = validated_data.get("description", instance.description)
         instance.duration = validated_data.get("duration", instance.duration)
 
         instance.save()
 
+        return instance
+
+
+class GenreSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Genre
+        fields = "__all__"
+
+    def create(self, validated_data):
+        return Genre.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get("name", instance.name)
+        instance.save()
+        return instance
+
+
+class ActorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Actor
+        fields = "__all__"
+
+    def create(self, validated_data):
+        return Actor.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get("first_name", instance.first_name)
+        instance.last_name = validated_data.get("last_name", instance.last_name)
+        instance.save()
+        return instance
+
+
+class CinemaHallSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CinemaHall
+        fields = "__all__"
+
+    def create(self, validated_data):
+        return CinemaHall.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get("name", instance.name)
+        instance.rows = validated_data.get("rows", instance.rows)
+        instance.seats_in_row = validated_data.get(
+            "seats_in_row", instance.seats_in_row
+        )
+        instance.save()
         return instance
